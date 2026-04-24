@@ -1,0 +1,59 @@
+# SHADOW DEPLOYMENT – Shadow (receives mirrored traffic; responses discarded)
+# Use an Istio VirtualService or Nginx mirror directive to duplicate requests.
+# The shadow pod runs the new version under real load with zero user impact.
+# Rollback: simply delete this deployment.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aceest-fitness-shadow
+  namespace: aceest
+  labels:
+    app: aceest-fitness
+    role: shadow
+    version: "3.2.4"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: aceest-fitness
+      role: shadow
+  template:
+    metadata:
+      labels:
+        app: aceest-fitness
+        role: shadow
+        version: "3.2.4"
+    spec:
+      containers:
+        - name: aceest-fitness
+          image: prasannalakshmi/aceest-fitness:3.2.4
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+---
+# Internal-only ClusterIP service for shadow pods
+apiVersion: v1
+kind: Service
+metadata:
+  name: aceest-fitness-shadow-svc
+  namespace: aceest
+spec:
+  selector:
+    app: aceest-fitness
+    role: shadow
+  ports:
+    - port: 80
+      targetPort: 5000
+  type: ClusterIP

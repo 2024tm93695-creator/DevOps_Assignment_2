@@ -1,0 +1,41 @@
+# SHADOW DEPLOYMENT – Primary (serves real user traffic)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aceest-fitness-primary
+  namespace: aceest
+  labels:
+    app: aceest-fitness
+    role: primary
+    version: "3.1.2"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: aceest-fitness
+      role: primary
+  template:
+    metadata:
+      labels:
+        app: aceest-fitness
+        role: primary
+        version: "3.1.2"
+    spec:
+      containers:
+        - name: aceest-fitness
+          image: prasannalakshmi/aceest-fitness:3.1.2
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5

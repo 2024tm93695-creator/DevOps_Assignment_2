@@ -1,0 +1,21 @@
+# BLUE-GREEN SERVICE
+# Switch traffic by changing selector.slot from "blue" to "green" (or vice-versa).
+# Rollback: change slot back to "blue" – instant, zero-downtime.
+apiVersion: v1
+kind: Service
+metadata:
+  name: aceest-fitness-svc
+  namespace: aceest
+  labels:
+    app: aceest-fitness
+  annotations:
+    deployment.strategy: blue-green
+spec:
+  selector:
+    app: aceest-fitness
+    slot: blue           # ← change to "green" to promote; revert to "blue" to rollback
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5000
+  type: LoadBalancer

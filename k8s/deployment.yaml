@@ -1,0 +1,55 @@
+# Base Rolling-Update deployment (default strategy)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aceest-fitness
+  namespace: aceest
+  labels:
+    app: aceest-fitness
+    version: "3.2.4"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: aceest-fitness
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0          # zero-downtime rolling update
+  template:
+    metadata:
+      labels:
+        app: aceest-fitness
+        version: "3.2.4"
+    spec:
+      containers:
+        - name: aceest-fitness
+          image: prasannalakshmi/aceest-fitness:3.2.4
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          env:
+            - name: APP_VERSION
+              value: "3.2.4"
+            - name: PORT
+              value: "5000"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 10

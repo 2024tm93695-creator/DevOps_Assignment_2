@@ -1,0 +1,18 @@
+# CANARY SERVICE
+# Selects ALL pods with app=aceest-fitness (both stable + canary).
+# Traffic split is proportional to replica counts.
+apiVersion: v1
+kind: Service
+metadata:
+  name: aceest-fitness-svc
+  namespace: aceest
+  annotations:
+    deployment.strategy: canary
+spec:
+  selector:
+    app: aceest-fitness       # matches both stable and canary pods
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5000
+  type: LoadBalancer

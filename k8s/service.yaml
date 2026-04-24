@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: aceest-fitness-svc
+  namespace: aceest
+  labels:
+    app: aceest-fitness
+spec:
+  selector:
+    app: aceest-fitness
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5000
+      protocol: TCP
+  type: LoadBalancer
