@@ -2,12 +2,13 @@ FROM jenkins/jenkins:lts
 
 USER root
 
-# Install Python 3, pip, Docker CLI, curl
+# Install Python 3, pip, curl, unzip
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
     curl \
+    unzip \
     ca-certificates \
     gnupg \
     lsb-release \
@@ -26,7 +27,20 @@ RUN curl -LO "https://dl.k8s.io/release/v1.30.0/bin/linux/amd64/kubectl" \
     && chmod +x kubectl \
     && mv kubectl /usr/local/bin/kubectl
 
+# Install SonarScanner CLI
+RUN curl -LO "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux-x64.zip" \
+    && unzip sonar-scanner-cli-6.2.1.4610-linux-x64.zip -d /opt \
+    && ln -s /opt/sonar-scanner-6.2.1.4610-linux-x64/bin/sonar-scanner /usr/local/bin/sonar-scanner \
+    && rm sonar-scanner-cli-6.2.1.4610-linux-x64.zip
+
+# Fix Docker socket permissions at container start
+RUN echo '#!/bin/bash\nchmod 666 /var/run/docker.sock 2>/dev/null || true\nexec "$@"' \
+    > /entrypoint.sh && chmod +x /entrypoint.sh
+
 # Add jenkins user to docker group
 RUN groupadd -f docker && usermod -aG docker jenkins
 
 USER jenkins
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/usr/local/bin/jenkins.sh"]
