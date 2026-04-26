@@ -9,7 +9,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: prasannamanne/aceest-fitness:3.2.4
+    image: 098765421/aceest-fitness:3.2.4
     container_name: aceest-fitness
     restart: unless-stopped
     ports:

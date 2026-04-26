@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO = "prasannamanne/aceest-fitness"
+        DOCKER_HUB_REPO = "098765421/aceest-fitness"
         SONAR_HOST_URL  = "https://sonarcloud.io"
         APP_VERSION     = "3.2.4"
         IMAGE_TAG       = "${APP_VERSION}-${BUILD_NUMBER}"
