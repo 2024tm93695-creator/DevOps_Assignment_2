@@ -57,12 +57,14 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
-                        sh '''
-                            sonar-scanner \
-                                -Dsonar.host.url=http://host.docker.internal:9000 \
-                                -Dsonar.token=${SONAR_TOKEN}
-                        '''
+                    withSonarQubeEnv('SonarQube') {
+                        withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
+                            sh '''
+                                sonar-scanner \
+                                    -Dsonar.host.url=http://host.docker.internal:9000 \
+                                    -Dsonar.token=$SONAR_TOKEN
+                            '''
+                        }
                     }
                 }
             }
@@ -97,11 +99,11 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
-                    sh """
-                        echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
-                        docker push ${DOCKER_HUB_REPO}:${IMAGE_TAG}
-                        docker push ${DOCKER_HUB_REPO}:latest
-                    """
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push ''' + DOCKER_HUB_REPO + ''':''' + IMAGE_TAG + '''
+                        docker push ''' + DOCKER_HUB_REPO + ''':latest
+                    '''
                 }
             }
         }
