@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
         - name: aceest-fitness
-          image: prasannalakshmi/aceest-fitness:3.2.4
+          image: prasannamanne/aceest-fitness:3.2.4
           ports:
             - containerPort: 5000
           env:

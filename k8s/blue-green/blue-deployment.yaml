@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: aceest-fitness
-          image: prasannalakshmi/aceest-fitness:3.1.2
+          image: prasannamanne/aceest-fitness:3.1.2
           imagePullPolicy: Always
           ports:
             - containerPort: 5000

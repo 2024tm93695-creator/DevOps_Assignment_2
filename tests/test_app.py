@@ -1,20 +1,26 @@
 """Pytest test suite for ACEest Fitness & Gym Flask API"""
 
 import os
+import tempfile
 import pytest
 
-os.environ["DB_NAME"] = ":memory:"
-
 from app import app, init_db, calculate_bmi, calculate_calories, PROGRAMS
+import app as _app_module
 
 
 @pytest.fixture
 def client():
+    db_fd, db_path = tempfile.mkstemp(suffix=".db")
+    os.close(db_fd)
+    _app_module.DB_NAME = db_path
+
     app.config["TESTING"] = True
     with app.test_client() as c:
         with app.app_context():
             init_db()
         yield c
+
+    os.unlink(db_path)
 
 
 # ---------------------------------------------------------------------------

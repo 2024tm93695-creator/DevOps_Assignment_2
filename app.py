@@ -104,7 +104,7 @@ def calculate_bmi(weight_kg: float, height_cm: float) -> dict:
     return {"bmi": bmi, "category": category, "risk": risk}
 
 
-def calculate_calories(weight_kg: float, program: str) -> int | None:
+def calculate_calories(weight_kg: float, program: str):
     prog = PROGRAMS.get(program)
     if not prog or not weight_kg:
         return None

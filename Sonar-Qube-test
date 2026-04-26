@@ -1,0 +1,4 @@
+C:\Users\prasa\Downloads\sonar-scanner\bin\sonar-scanner.bat "-Dsonar.host.url=http://localhost:9000" "-Dsonar.token=sqp_924f8a42d773441a76efc9f3c850d6064cb77ab9"
+http://localhost:9000/dashboard?id=aceest-fitness
+
+Docker Hub:https://hub.docker.com/r/prasannamanne/aceest-fitness/tags

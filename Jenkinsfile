@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO   = "prasannalakshmi/aceest-fitness"
+        DOCKER_HUB_REPO   = "prasannamanne/aceest-fitness"
         DOCKER_CREDENTIALS = credentials('dockerhub-credentials')
-        SONAR_HOST_URL    = "http://localhost:9000"
-        SONAR_TOKEN       = credentials('sonarqube-token')
+        SONAR_HOST_URL    = "https://sonarcloud.io"
+        SONAR_TOKEN       = credentials('sonarcloud-token')
         APP_VERSION       = "3.2.4"
         IMAGE_TAG         = "${APP_VERSION}-${BUILD_NUMBER}"
         KUBECONFIG        = credentials('kubeconfig')
@@ -68,18 +68,13 @@ pipeline {
         }
 
         // ------------------------------------------------------------------
-        stage('SonarQube Analysis') {
+        stage('SonarCloud Analysis') {
         // ------------------------------------------------------------------
             steps {
-                withSonarQubeEnv('SonarQube') {
+                withSonarQubeEnv('SonarCloud') {
                     sh '''
                         sonar-scanner \
-                            -Dsonar.projectKey=aceest-fitness \
-                            -Dsonar.projectVersion=${APP_VERSION} \
-                            -Dsonar.sources=. \
-                            -Dsonar.exclusions=venv/**,reports/**,k8s/** \
-                            -Dsonar.python.coverage.reportPaths=reports/coverage.xml \
-                            -Dsonar.python.xunit.reportPath=reports/junit.xml
+                            -Dsonar.token=${SONAR_TOKEN}
                     '''
                 }
             }
